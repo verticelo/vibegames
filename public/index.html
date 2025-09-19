@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Choose Your Challenge</title>
+    <meta name="description" content="Game selector for two mini games: Who has the biggest brain? and Who can sing the note?" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #0f1125;
+            --bg-2: #121435;
+            --accent-1: #7dd3fc; /* sky */
+            --accent-2: #a78bfa; /* violet */
+            --accent-3: #f472b6; /* pink */
+            --card-bg: rgba(255,255,255,0.06);
+            --card-border: rgba(255,255,255,0.18);
+            --text: #ecf0ff;
+            --muted: #b6b9d8;
+            --shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        /* --- Base reset --- */
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: 'Outfit', system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            color: var(--text);
+            background: radial-gradient(1200px 800px at 10% 10%, #1a1942 0%, transparent 60%),
+            radial-gradient(1000px 700px at 90% 20%, #2b1745 0%, transparent 60%),
+            linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            overflow-x: hidden;
+        }
+
+        /* Animated aurora streaks */
+        .aurora {
+            position: fixed;
+            inset: -10vmax;
+            background: conic-gradient(from 180deg at 40% 20%, rgba(124,58,237,0.35), rgba(56,189,248,0.15), rgba(236,72,153,0.25), transparent 70%);
+            filter: blur(40px) saturate(120%);
+            opacity: 0.65;
+            animation: drift 24s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        @keyframes drift { to { transform: rotate(360deg); } }
+
+        /* Subtle starfield */
+        .stars::before, .stars::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.7) 40%, transparent 41%),
+                    radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.6) 40%, transparent 41%),
+                    radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.5) 40%, transparent 41%),
+                    radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.5) 40%, transparent 41%);
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .stars::after { filter: blur(0.6px); opacity: 0.2; }
+
+        /* Layout */
+        .wrap {
+            min-height: 100dvh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+        header {
+            padding: clamp(20px, 4vw, 48px) 24px 0;
+            text-align: center;
+        }
+        .title {
+            font-size: clamp(28px, 5vw, 56px);
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            margin: 0 0 10px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 6px 18px rgba(167,139,250,0.25));
+            text-wrap: balance;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-weight: 400;
+            margin: 0 auto;
+            max-width: 70ch;
+        }
+
+        .grid {
+            display: grid;
+            gap: clamp(18px, 3vw, 28px);
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            align-items: center;
+            justify-content: center;
+            padding: clamp(20px, 4vw, 40px);
+            width: min(1100px, 92%);
+            margin-inline: auto;
+        }
+        @media (max-width: 800px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* Game cards are simple <a> links */
+        .game-card {
+            position: relative;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 14px;
+            padding: clamp(18px, 3vw, 28px);
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+            border: 1px solid var(--card-border);
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: var(--shadow);
+            transform: translateY(0) scale(1);
+            transition: transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+        /* Iridescent border glow */
+        .game-card::before {
+            content: "";
+            position: absolute; inset: -1px;
+            border-radius: 22px;
+            padding: 1px;
+            background: conic-gradient(from 0deg,
+            rgba(125, 211, 252, .7),
+            rgba(167, 139, 250, .8),
+            rgba(244, 114, 182, .7),
+            rgba(125, 211, 252, .7));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0.0;
+            transition: opacity .3s ease;
+            pointer-events: none;
+        }
+
+        .game-card:hover, .game-card:focus-visible {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+        }
+        .game-card:hover::before, .game-card:focus-visible::before { opacity: 0.9; }
+
+        .card-top { display: flex; align-items: center; gap: 14px; }
+        .icon {
+            width: 68px; height: 68px;
+            flex: 0 0 68px;
+            display: grid; place-items: center;
+            font-size: 34px;
+            border-radius: 18px;
+            background: radial-gradient(80px 60px at 30% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.06)),
+            linear-gradient(135deg, rgba(125,211,252,.35), rgba(244,114,182,.35));
+            border: 1px solid rgba(255,255,255,0.25);
+            backdrop-filter: blur(4px);
+        }
+
+        .name {
+            font-size: clamp(20px, 2.6vw, 28px);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            margin: 0;
+        }
+        .tagline { color: var(--muted); margin: 0; font-weight: 300; }
+
+        .card-body { color: #d9dcff; opacity: 0.9; }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+            align-self: start;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            background: linear-gradient(90deg, rgba(125,211,252,.25), rgba(167,139,250,.25));
+            border: 1px solid rgba(255,255,255,0.25);
+            text-decoration: none;
+            color: var(--text);
+            transition: transform .2s ease, background .2s ease;
+        }
+        .game-card:hover .cta { transform: translateX(2px); }
+
+        .chip {
+            font-size: 12px; font-weight: 600;
+            padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.25);
+            background: linear-gradient(90deg, rgba(125,211,252,.18), rgba(244,114,182,.18));
+            color: #e9edff; opacity: 0.9;
+        }
+
+        .footer { text-align: center; color: var(--muted); padding: 24px; font-size: 13px; }
+
+        /* Accessibility */
+        .game-card:focus-visible { outline: 3px dashed rgba(125,211,252,.9); outline-offset: 6px; }
+        @media (prefers-reduced-motion: reduce) {
+            .aurora { animation: none; }
+            .game-card, .cta { transition: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
+
+<div class="wrap">
+    <header>
+        <h1 class="title">Choose Your Challenge</h1>
+        <p class="subtitle">Pick a game to test your skills. Sharpen your mind or tune your pitch—either way, it's playtime.</p>
+    </header>
+
+    <main>
+        <section class="grid" aria-label="Game selection">
+            <a class="game-card" href="/edugame">
+                <div class="card-top">
+                    <div class="icon" aria-hidden="true">🧠</div>
+                    <div>
+                        <h2 class="name">Who has the biggest brain?</h2>
+                        <p class="tagline">Fast-thinking puzzles & pattern mastery.</p>
+                    </div>
+                    <span class="chip" style="margin-left:auto">Mind Game</span>
+                </div>
+                <p class="card-body">Race through quick-fire challenges that reward logic, memory, and speed. Compare scores with friends and claim the crown.</p>
+                <span class="cta">Play now →</span>
+            </a>
+
+            <a class="game-card" href="/voicetrainer">
+                <div class="card-top">
+                    <div class="icon" aria-hidden="true">🎵</div>
+                    <div>
+                        <h2 class="name">Who can sing the note?</h2>
+                        <p class="tagline">Match the pitch—hit it and score.</p>
+                    </div>
+                    <span class="chip" style="margin-left:auto">Music Game</span>
+                </div>
+                <p class="card-body">Listen, sing, and hold the tone. Precision earns points, streaks unlock bonuses—perfect for solo practice or party play.</p>
+                <span class="cta">Sing now →</span>
+            </a>
+        </section>
+    </main>
+
+    <footer class="footer">Made with ❤ for fun & friendly competition.</footer>
+</div>
+</body>
+</html>

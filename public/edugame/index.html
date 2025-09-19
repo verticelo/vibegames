@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>EduGames — Login & Game Picker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- LOGIN SCREEN -->
+<section id="login" class="center">
+    <div class="card">
+        <div class="header">
+            <h1>EduGames</h1>
+            <span class="tag" title="Local-first demo, no server required">● Local demo</span>
+        </div>
+        <p>Compete within a <strong>group</strong>, track <strong>user</strong> scores, and climb the <strong>leaderboards</strong>. This prototype stores data locally in your browser.</p>
+        <div class="row" style="margin-top:18px">
+            <div class="col">
+                <label for="group">Group name (enter any name)</label>
+                <input id="group" class="input" placeholder="e.g. your family name or class name" autocomplete="organization" />
+            </div>
+            <div class="col">
+                <label for="username">Username (will be shown on leaderboard)</label>
+                <input id="username" class="input" placeholder="e.g. Murray, Ludvig, Kant" autocomplete="nickname" />
+            </div>
+        </div>
+        <div class="row" style="margin-top:16px; align-items:center">
+            <button id="continue" class="btn accent" disabled>Continue</button>
+            <button id="resetAll" class="btn ghost" title="Clear all stored data for all groups">Clear all data</button>
+        </div>
+        <p class="footer-note">Tip: names are case-insensitive for identity; display uses your latest casing.</p>
+    </div>
+</section>
+
+<!-- HUB / GAME PICKER -->
+<section id="hub" class="container" hidden>
+    <div class="header">
+        <div>
+            <h2 style="margin-bottom:4px">Welcome, <span id="who"></span></h2>
+            <div class="row" style="gap:10px">
+                <span class="pill">Group: <strong id="groupLabel"></strong></span>
+                <span class="pill">Your total: <strong id="yourTotal">0</strong></span>
+            </div>
+        </div>
+        <div class="row" style="gap:10px">
+            <button id="switch" class="btn ghost">Switch user/group</button>
+            <button id="clearGroup" class="btn danger" title="Delete only this group's data">Reset this group</button>
+        </div>
+    </div>
+
+    <div class="hub">
+        <div class="panel">
+            <h3>Pick a game</h3>
+            <div class="content games" id="games"></div>
+        </div>
+
+        <div class="panel">
+            <div class="tabs">
+                <div class="tab active" data-tab="global">Global leaderboard</div>
+                <div class="tab" data-tab="game">Game leaderboard</div>
+            </div>
+            <div class="content" id="lb-global">
+                <table id="tbl-global">
+                    <thead><tr><th>#</th><th>Player</th><th>Total</th><th>Last updated</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="content" id="lb-game" hidden>
+                <div class="row" style="align-items:center;margin-bottom:8px">
+                    <label for="lbGameSelect" style="margin:0">Game</label>
+                    <select id="lbGameSelect" class="input" style="max-width:280px"></select>
+                </div>
+                <table id="tbl-game">
+                    <thead><tr><th>#</th><th>Player</th><th>Score</th><th>Last updated</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SIMPLE MOCK GAME SCREEN -->
+<section id="game" class="game-screen" hidden>
+    <div class="card game-full">
+        <div class="header">
+            <h2 id="gameTitle">Game</h2>
+            <div class="row">
+                <button id="backToHub" class="btn ghost">← Back</button>
+            </div>
+        </div>
+        <p id="gameDesc" style="margin-top:4px">This is a placeholder screen for the selected game. Use the buttons below to simulate scoring while we build the real gameplay.</p>
+        <div id="gameMount" style="margin-top:16px"></div>
+        <div class="row" id="mockControls" style="margin-top:16px;flex-wrap:wrap">
+            <button class="btn" data-add="10">+10 points</button>
+            <button class="btn" data-add="25">+25 points</button>
+            <button class="btn" data-add="50">+50 points</button>
+            <button class="btn" data-add="100">+100 points</button>
+            <button id="finishGame" class="btn accent">Finish & save</button>
+        </div>
+        <p class="footer-note">Scores are saved per <strong>group</strong> and rolled up into the <strong>global leaderboard</strong>.</p>
+    </div>
+</section>
+
+<div class="toast" id="toast"><div id="toastMsg">Saved!</div></div>
+
+<script defer src="app.js"></script>
+</body>
+</html>
